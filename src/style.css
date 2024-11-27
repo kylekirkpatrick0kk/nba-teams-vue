@@ -63,12 +63,13 @@ button:focus-visible {
   margin: 0 auto;
   padding: 2rem;
   text-align: center;
+  background-color: #f0f0f0;
 }
 
 @media (prefers-color-scheme: light) {
   :root {
     color: #213547;
-    background-color: #ffffff;
+    background-color: #2e2e2e;
   }
   a:hover {
     color: #747bff;
