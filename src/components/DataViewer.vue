@@ -31,7 +31,14 @@
                 </template>
               </span>
             </div>
-            <p class="game-time">{{ formatLocalTime(competition.date) }}</p>
+            <p class="game-time">
+              <template v-if="hasGameStarted(competition.date)">
+                {{ getScore(competition.competitors) }}
+              </template>
+              <template v-else>
+                {{ formatLocalTime(competition.date) }}
+              </template>
+            </p>
           </div>
         </li>
       </ul>
@@ -60,6 +67,14 @@
       formatLocalTime(dateString) {
         const date = new Date(dateString);
         return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      },
+      hasGameStarted(gameDate) {
+        return new Date() > new Date(gameDate);
+      },
+      getScore(competitors) {
+        const away = competitors.find(c => c.homeAway === 'away');
+        const home = competitors.find(c => c.homeAway === 'home');
+        return `${away.score} - ${home.score}`;
       }
     }
   };
