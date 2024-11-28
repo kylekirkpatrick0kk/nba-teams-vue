@@ -1,12 +1,11 @@
 // src/apiService.js
 import axios from 'axios';
 
-const API_URL = 'http://site.api.espn.com/apis/site/v2/sports/basketball/nba/scoreboard';
-const NEWS_API_URL = 'http://site.api.espn.com/apis/site/v2/sports/basketball/nba/news';
+const NETLIFY_FUNCTIONS_URL = '/.netlify/functions';
 
 export const fetchData = async () => {
   try {
-    const response = await axios.get(API_URL);
+    const response = await axios.get(`${NETLIFY_FUNCTIONS_URL}/fetch-games`);
     return response.data;
   } catch (error) {
     console.error('Error fetching data:', error);
@@ -16,7 +15,7 @@ export const fetchData = async () => {
 
 export const fetchNewsData = async () => {
   try {
-    const response = await axios.get(NEWS_API_URL);
+    const response = await axios.get(`${NETLIFY_FUNCTIONS_URL}/fetch-news`);
     return response.data;
   } catch (error) {
     console.error('Error fetching data:', error);
