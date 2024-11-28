@@ -1,6 +1,5 @@
 <template>
     <div>
-      <h1>NBA GAMEDAY</h1>
       <div class="meta-info">
         <!-- date in top left -->
         <p class="date">{{ new Date().toDateString() }}</p>
