@@ -4,3 +4,5 @@
 3. npm install
 4. npm run dev
 5. open the app using browser of your choice by going to: http://localhost:5173/
+
+You can also check out a live version of the application here: nba-gameday.netlify.app
