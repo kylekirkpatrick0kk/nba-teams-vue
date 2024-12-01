@@ -33,6 +33,7 @@
             <p class="game-time">
               <template v-if="hasGameStarted(competition.date)">
                 {{ getScore(competition.competitors) }}
+                <span class="game-status">{{ getGameStatus(competition.status) }}</span>
               </template>
               <template v-else>
                 {{ formatLocalTime(competition.date) }}
@@ -74,6 +75,9 @@
         const away = competitors.find(c => c.homeAway === 'away');
         const home = competitors.find(c => c.homeAway === 'home');
         return `${away.score} - ${home.score}`;
+      },
+      getGameStatus(status) {
+        return status.type.shortDetail;
       }
     }
   };
@@ -161,5 +165,12 @@ h1 {
   padding-bottom: 10px;
   margin-bottom: 20px;
   text-align: center;
+}
+
+.game-status {
+  display: block;
+  margin-top: 5px;
+  font-size: 1em;
+  color: #b0b0b0;
 }
 </style>
