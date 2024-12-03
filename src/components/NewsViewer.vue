@@ -2,7 +2,9 @@
     <div class="news-container">
       <ul class="news-list">
         <li v-for="article in articles" :key="article.dataSourceIdentifier" class="news-item">
-          <h3 class="headline">{{ article.headline }}</h3>
+          <h3 class="headline">
+            <a :href="article.links.web.href" target="_blank" rel="noopener noreferrer">{{ article.headline }}</a>
+          </h3>
           <p class="description">{{ article.description }}</p>
         </li>
       </ul>
@@ -21,6 +23,11 @@
     description: string;
     lastModified: string;
     published: string;
+    links: {
+      web: {
+        href: string;
+      };
+    };
   }
   
   export default defineComponent({
@@ -68,6 +75,15 @@
   .headline {
     font-size: 1.5em;
     font-weight: bold;
+  }
+
+  .headline a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .headline a:hover {
+    text-decoration: underline;
   }
   
   .description {
