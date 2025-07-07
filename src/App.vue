@@ -1,37 +1,18 @@
 <template>
   <div id="app">
-    <h1>NBA GAMEDAY</h1>
-    <button @click="toggleNews" class="toggle-news-button">
-      {{ showNews ? 'Hide News' : 'Show News' }}
-    </button>
-    <NewsViewer v-if="showNews" />
-    <DataViewer />
+    <nav class="navigation">
+      <router-link to="/" class="nav-link">Home</router-link>
+      <router-link to="/team-analytics" class="nav-link">Team Analytics</router-link>
+    </nav>
+    <router-view />
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue';
-import DataViewer from './components/DataViewer.vue';
-import NewsViewer from './components/NewsViewer.vue';
+import { defineComponent } from 'vue';
 
 export default defineComponent({
   name: 'App',
-  components: {
-    DataViewer,
-    NewsViewer,
-  },
-  setup() {
-    const showNews = ref(false);
-
-    const toggleNews = () => {
-      showNews.value = !showNews.value;
-    };
-
-    return {
-      showNews,
-      toggleNews,
-    };
-  },
 });
 </script>
 
@@ -45,17 +26,20 @@ export default defineComponent({
   color: #e0e0e0;
 }
 
-.toggle-news-button {
-  padding: 10px 20px;
-  cursor: pointer;
-  background-color: #007bff;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  margin-top: 20px;
+.navigation {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin-bottom: 20px;
 }
 
-.toggle-news-button:hover {
-  background-color: #0056b3;
+.nav-link {
+  text-decoration: none;
+  color: #007bff;
+  font-weight: bold;
+}
+
+.nav-link:hover {
+  color: #0056b3;
 }
 </style>
