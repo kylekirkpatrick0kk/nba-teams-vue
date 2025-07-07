@@ -22,3 +22,13 @@ export const fetchNewsData = async () => {
     throw error;
   }
 };
+
+export const fetchTeamsData = async () => {
+  try {
+    const response = await axios.get(`${NETLIFY_FUNCTIONS_URL}/fetch-teams`);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching data:', error);
+    throw error;
+  }
+}
