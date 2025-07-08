@@ -4,7 +4,12 @@
     <div v-if="teamsData" class="teams-container">
       <div v-for="league in teamsData.sports[0].leagues" :key="league.id" class="league">
         <div class="teams">
-          <div v-for="team in league.teams" :key="team.team.id" class="team-card">
+          <div
+            v-for="team in league.teams"
+            :key="team.team.id"
+            class="team-card"
+            @click="selectTeam(team.team.abbreviation)"
+          >
             <img :src="team.team.logos[0].href" :alt="team.team.displayName" class="team-logo" />
             <h4>{{ team.team.displayName }}</h4>
           </div>
@@ -12,11 +17,13 @@
       </div>
     </div>
     <p v-else>Loading team data...</p>
+    <TeamDetails v-if="selectedTeam" :city="selectedTeam" />
   </div>
 </template>
 
 <script lang="ts">
 import { defineComponent, ref, onMounted } from 'vue';
+import TeamDetails from './TeamDetails.vue';
 // @ts-ignore
 import { fetchTeamsData } from '../apiService';
 
@@ -32,6 +39,8 @@ interface Logo {
 interface Team {
   id: string;
   displayName: string;
+  slug: string;
+  abbreviation: string;
   logos: Logo[];
 }
 
@@ -52,8 +61,10 @@ interface TeamsData {
 
 export default defineComponent({
   name: 'TeamsViewer',
+  components: { TeamDetails },
   setup() {
     const teamsData = ref<TeamsData | null>(null);
+    const selectedTeam = ref<string | null>(null);
 
     const loadTeamsData = async () => {
       try {
@@ -64,12 +75,16 @@ export default defineComponent({
       }
     };
 
+    const selectTeam = (city: string) => {
+      selectedTeam.value = city;
+    };
+
     onMounted(() => {
       console.log('TeamViewer mounted');
       loadTeamsData();
     });
 
-    return { teamsData };
+    return { teamsData, selectedTeam, selectTeam };
   },
 });
 </script>
@@ -97,6 +112,7 @@ export default defineComponent({
   border-radius: 5px;
   text-align: center;
   width: 150px;
+  cursor: pointer;
 }
 
 .team-logo {

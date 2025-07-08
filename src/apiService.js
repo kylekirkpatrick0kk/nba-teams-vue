@@ -32,3 +32,15 @@ export const fetchTeamsData = async () => {
     throw error;
   }
 }
+
+export const fetchTeamData = async (team) => {
+  try {
+    const response = await axios.get(`${NETLIFY_FUNCTIONS_URL}/fetch-team`, {
+      params: { team },
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching team data:', error);
+    throw error;
+  }
+};
