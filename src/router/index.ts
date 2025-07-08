@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import HomePage from '../views/HomePage.vue';
 import TeamAnalytics from '../views/TeamAnalytics.vue';
+import TeamDetails from '../components/TeamDetails.vue';
 
 const routes = [
   {
@@ -12,6 +13,12 @@ const routes = [
     path: '/team-analytics',
     name: 'TeamAnalytics',
     component: TeamAnalytics,
+  },
+  {
+    path: '/team/:city',
+    name: 'TeamDetails',
+    component: TeamDetails,
+    props: true,
   },
 ];
 

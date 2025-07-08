@@ -23,6 +23,7 @@
 
 <script lang="ts">
 import { defineComponent, ref, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
 import TeamDetails from './TeamDetails.vue';
 // @ts-ignore
 import { fetchTeamsData } from '../apiService';
@@ -65,6 +66,7 @@ export default defineComponent({
   setup() {
     const teamsData = ref<TeamsData | null>(null);
     const selectedTeam = ref<string | null>(null);
+    const router = useRouter();
 
     const loadTeamsData = async () => {
       try {
@@ -77,6 +79,7 @@ export default defineComponent({
 
     const selectTeam = (city: string) => {
       selectedTeam.value = city;
+      router.push({ name: 'TeamDetails', params: { city } });
     };
 
     onMounted(() => {

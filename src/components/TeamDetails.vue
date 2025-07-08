@@ -17,7 +17,8 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, onMounted, watch } from 'vue';
+import { defineComponent, ref, watch } from 'vue';
+import { useRoute } from 'vue-router';
 // @ts-ignore
 import { fetchTeamData } from '../apiService';
 
@@ -70,33 +71,27 @@ interface TeamData {
 
 export default defineComponent({
   name: 'TeamDetails',
-  props: {
-    city: {
-      type: String,
-      required: true,
-    },
-  },
-  setup(props) {
+  setup() {
+    const route = useRoute();
     const teamData = ref<TeamData | null>(null);
 
     const loadTeamData = async (city: string) => {
       try {
         const formattedCity = city.toLowerCase().trim().replace(' ', '');
         const data = await fetchTeamData(formattedCity);
-        teamData.value = data.team; // Bind the `team` object from the response
+        teamData.value = data.team;
       } catch (error) {
         console.error('Error fetching team data:', error);
       }
     };
 
-    // Watch for changes in the `city` prop and reload data
-    watch(() => props.city, (newCity) => {
-      loadTeamData(newCity);
-    });
-
-    onMounted(() => {
-      loadTeamData(props.city);
-    });
+    watch(
+      () => route.params.city,
+      (newCity) => {
+        if (typeof newCity === 'string') loadTeamData(newCity);
+      },
+      { immediate: true }
+    );
 
     return { teamData };
   },
