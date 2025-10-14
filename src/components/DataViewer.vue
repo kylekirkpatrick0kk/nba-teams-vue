@@ -12,8 +12,18 @@
             <div class="competition">
               <span v-for="competitor in competition.competitors" :key="competitor.id">
                 <template v-if="competitor.homeAway === 'away'">
-                  <img :src="competitor.team.logo" alt="Away Team Logo" class="team-logo" />
-                  <span class="team-name">{{ competitor.team.displayName }}</span>
+                  <img
+                    :src="competitor.team.logo"
+                    :alt="competitor.team.displayName + ' Logo'"
+                    class="team-logo clickable"
+                    :title="'View ' + competitor.team.displayName + ' details'"
+                    @click="goToTeam(competitor.team)"
+                  />
+                  <span
+                    class="team-name clickable"
+                    :title="'View ' + competitor.team.displayName + ' details'"
+                    @click="goToTeam(competitor.team)"
+                  >{{ competitor.team.displayName }}</span>
                   <div class="team-record">
                     {{ competitor.records.find(record => record.type === 'total')?.summary || '' }}
                   </div>
@@ -22,8 +32,18 @@
               <span class="vs"> @ </span>
               <span v-for="competitor in competition.competitors" :key="competitor.id">
                 <template v-if="competitor.homeAway === 'home'">
-                  <span class="team-name">{{ competitor.team.displayName }}</span>
-                  <img :src="competitor.team.logo" alt="Home Team Logo" class="team-logo" />
+                  <span
+                    class="team-name clickable"
+                    :title="'View ' + competitor.team.displayName + ' details'"
+                    @click="goToTeam(competitor.team)"
+                  >{{ competitor.team.displayName }}</span>
+                  <img
+                    :src="competitor.team.logo"
+                    :alt="competitor.team.displayName + ' Logo'"
+                    class="team-logo clickable"
+                    :title="'View ' + competitor.team.displayName + ' details'"
+                    @click="goToTeam(competitor.team)"
+                  />
                   <div class="team-record">
                     {{ competitor.records.find(record => record.type === 'total')?.summary || '' }}
                   </div>
@@ -78,6 +98,12 @@
       },
       getGameStatus(status) {
         return status.type.shortDetail;
+      },
+      goToTeam(team) {
+        // Prefer abbreviation; fallback to slug or displayName processed similarly to TeamDetails expectations
+        const city = (team.abbreviation || team.slug || team.displayName || '').toString();
+        if (!city) return;
+        this.$router.push({ name: 'TeamDetails', params: { city } });
       }
     }
   };
@@ -135,6 +161,15 @@
   width: 50px;
   height: 50px;
   margin: 0 10px;
+}
+
+.clickable {
+  cursor: pointer;
+  transition: transform 0.15s ease, filter 0.15s ease;
+}
+.clickable:hover {
+  transform: scale(1.05);
+  filter: drop-shadow(0 0 4px rgba(255,255,255,0.4));
 }
 
 .team-name {
