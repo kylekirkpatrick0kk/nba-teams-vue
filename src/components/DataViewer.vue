@@ -59,6 +59,65 @@
                 {{ formatLocalTime(competition.date) }}
               </template>
             </p>
+            <!-- Odds / Betting Info -->
+            <div v-if="getPrimaryOdds(competition)" class="odds-card">
+              <div class="odds-header">
+                <div class="provider">
+                  <img
+                    v-if="getPrimaryOdds(competition).header?.logo?.light"
+                    :src="getPrimaryOdds(competition).header.logo.light"
+                    :alt="getPrimaryOdds(competition).provider?.name || 'Odds Provider'"
+                    class="provider-logo"
+                  />
+                  <span class="provider-name">{{ getPrimaryOdds(competition).provider?.name || getPrimaryOdds(competition).header?.text || 'Odds' }}</span>
+                </div>
+                <a
+                  v-if="buildOddsMoreUrl(competition)"
+                  class="more-odds-link"
+                  :href="buildOddsMoreUrl(competition)"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >More</a>
+              </div>
+              <div class="odds-grid">
+                <div class="odds-block" v-if="getPrimaryOdds(competition).pointSpread">
+                  <span class="odds-label">Spread</span>
+                  <span class="odds-value">
+                    <template v-if="getPrimaryOdds(competition).pointSpread.away?.close">
+                      {{ formatSpread(getPrimaryOdds(competition).pointSpread.away.close.line) }} ({{ addPlus(getPrimaryOdds(competition).pointSpread.away.close.odds) }})
+                    </template>
+                    <span class="divider"> / </span>
+                    <template v-if="getPrimaryOdds(competition).pointSpread.home?.close">
+                      {{ formatSpread(getPrimaryOdds(competition).pointSpread.home.close.line) }} ({{ addPlus(getPrimaryOdds(competition).pointSpread.home.close.odds) }})
+                    </template>
+                  </span>
+                </div>
+                <div class="odds-block" v-if="getPrimaryOdds(competition).moneyline">
+                  <span class="odds-label">Moneyline</span>
+                  <span class="odds-value">
+                    <template v-if="getPrimaryOdds(competition).moneyline.away?.close">
+                      {{ addPlus(getPrimaryOdds(competition).moneyline.away.close.odds) }}
+                    </template>
+                    <span class="divider"> / </span>
+                    <template v-if="getPrimaryOdds(competition).moneyline.home?.close">
+                      {{ addPlus(getPrimaryOdds(competition).moneyline.home.close.odds) }}
+                    </template>
+                  </span>
+                </div>
+                <div class="odds-block" v-if="getPrimaryOdds(competition).total">
+                  <span class="odds-label">Total</span>
+                  <span class="odds-value">
+                    <template v-if="getPrimaryOdds(competition).total.over?.close">
+                      O {{ stripPrefix(getPrimaryOdds(competition).total.over.close.line) }} ({{ addPlus(getPrimaryOdds(competition).total.over.close.odds) }})
+                    </template>
+                    <span class="divider"> / </span>
+                    <template v-if="getPrimaryOdds(competition).total.under?.close">
+                      U {{ stripPrefix(getPrimaryOdds(competition).total.under.close.line) }} ({{ addPlus(getPrimaryOdds(competition).total.under.close.odds) }})
+                    </template>
+                  </span>
+                </div>
+              </div>
+            </div>
           </div>
         </li>
       </ul>
@@ -104,6 +163,45 @@
         const city = (team.abbreviation || team.slug || team.displayName || '').toString();
         if (!city) return;
         this.$router.push({ name: 'TeamDetails', params: { city } });
+      },
+      getPrimaryOdds(competition) {
+        return competition && competition.odds && competition.odds.length ? competition.odds[0] : null;
+      },
+      addPlus(value) {
+        if (value === undefined || value === null) return '';
+        const s = value.toString();
+        if (s.startsWith('+') || s.startsWith('-')) return s; // already signed
+        // Moneyline odds like 225 should display +225
+        if (!isNaN(Number(s)) && Number(s) > 0) return '+' + s;
+        return s;
+      },
+      formatSpread(line) {
+        if (!line) return '';
+        // Ensure numeric spreads like -7.5 or +7.5. ESPN sometimes sends "+7.5" already or "-7.5".
+        let s = line.toString();
+        if (!s.startsWith('+') && !s.startsWith('-')) {
+          // Add plus if positive numeric
+            if (!isNaN(Number(s)) && Number(s) > 0) s = '+' + s;
+        }
+        return s;
+      },
+      stripPrefix(line) {
+        if (!line) return '';
+        // total lines have o230.5 / u230.5; return 230.5
+        return line.replace(/^[ou]/i, '');
+      },
+      extractEventIdFromOdds(competition) {
+        const odds = this.getPrimaryOdds(competition);
+        const href = odds?.link?.href || odds?.moneyline?.home?.close?.link?.href || odds?.moneyline?.away?.close?.link?.href;
+        if (!href) return null;
+        const match = href.match(/\/event\/([a-f0-9\-]+)/i); // capture UUID after /event/
+        if (!match) return null;
+        return match[1];
+      },
+      buildOddsMoreUrl(competition) {
+        const eventId = this.extractEventIdFromOdds(competition);
+        if (!eventId) return null;
+        return `https://espnbet.com/sport/basketball/organization/united-states/competition/nba/event/${eventId}`;
       }
     }
   };
@@ -208,4 +306,77 @@ h1 {
   font-size: 1em;
   color: #b0b0b0;
 }
+
+/* Odds Styling */
+.odds-card {
+  margin-top: 4px;
+  background: #141414;
+  border: 1px solid #2a2a2a;
+  border-radius: 6px;
+  padding: 8px 10px 10px;
+  width: 100%;
+  font-family: system-ui, Arial, sans-serif;
+}
+.odds-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+.provider {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: #e0e0e0;
+}
+.provider-logo {
+  width: 22px;
+  height: 22px;
+  object-fit: contain;
+  filter: drop-shadow(0 0 2px rgba(255,255,255,0.1));
+}
+.more-odds-link {
+  margin-left: auto;
+  font-size: 0.65rem;
+  text-decoration: none;
+  color: #3fa9ff;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+.more-odds-link:hover { text-decoration: underline; }
+.odds-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 6px;
+}
+.odds-block {
+  background: #1d1d1d;
+  padding: 6px 8px 8px;
+  border-radius: 4px;
+  text-align: center;
+  border: 1px solid #272727;
+  min-width: 0; /* allow grid item to shrink for long content */
+}
+.odds-label {
+  display: block;
+  font-size: 0.6rem;
+  font-weight: 600;
+  color: #9e9e9e;
+  letter-spacing: 0.7px;
+  margin-bottom: 2px;
+  text-transform: uppercase;
+}
+.odds-value {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #f0f0f0;
+  white-space: normal; /* allow wrapping */
+  word-break: break-word;
+  line-height: 1.05;
+}
+.divider { color: #555; margin: 0 2px; }
 </style>
