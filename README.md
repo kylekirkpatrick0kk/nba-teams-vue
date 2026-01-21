@@ -6,3 +6,8 @@
 5. open the app using browser of your choice by going to: http://localhost:5173/
 
 You can also check out a live version of the application here: nba-gameday.netlify.app
+
+## Favorites
+
+- In the Teams view, click the star on a team card to set it as your favorite (click again to remove).
+- Your favorite is saved in the browser and will be used to prioritize that team's matchup to the top of the gameday list when they play.

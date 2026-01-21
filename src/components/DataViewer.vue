@@ -7,9 +7,17 @@
         <p v-if="data && data.events" class="game-count">Number of NBA games today: {{ data.events.length }}</p>
       </div>
       <ul v-if="data && data.events" class="game-list">
-        <li v-for="event in data.events" :key="event.id" class="game-item">
+        <li
+          v-for="(event, idx) in sortedEvents"
+          :key="event.id"
+          class="game-item"
+          :class="{ 'favorite-highlight': idx === 0 && topIsFavorite }"
+        >
           <div v-for="competition in event.competitions" :key="competition.id">
             <div class="competition">
+              <div v-if="idx === 0 && topIsFavorite" class="favorite-pill" title="Prioritized because it's your favorite team">
+                ★ Favorite matchup
+              </div>
               <span v-for="competitor in competition.competitors" :key="competitor.id">
                 <template v-if="competitor.homeAway === 'away'">
                   <img
@@ -127,22 +135,75 @@
   
   <script>
   import { fetchData } from '../apiService';
+  import { getFavoriteTeam } from '../favorites';
   
   export default {
     name: 'DataViewer',
     data() {
       return {
         data: null,
+        favoriteAbbr: getFavoriteTeam(),
       };
     },
     async created() {
       try {
         this.data = await fetchData();
+        // Data fetched; sorting will be handled via computed
       } catch (error) {
         console.error('Error fetching data in component:', error);
       }
     },
+    mounted() {
+      const handler = (e) => {
+        this.favoriteAbbr = e?.detail || null;
+      };
+      window.addEventListener('favorite-team-changed', handler);
+      this._favHandler = handler;
+    },
+    beforeUnmount() {
+      if (this._favHandler) {
+        window.removeEventListener('favorite-team-changed', this._favHandler);
+      }
+    },
+    computed: {
+      sortedEvents() {
+        if (!this.data || !this.data.events || !this.data.events.length) return [];
+        const fav = (this.favoriteAbbr || '').toUpperCase();
+        // Stable sort: tag each event with original index
+        const tagged = this.data.events.map((ev, idx) => ({ ev, idx }));
+        tagged.sort((a, b) => {
+          const aFav = this.eventHasFavorite(a.ev, fav) ? 1 : 0;
+          const bFav = this.eventHasFavorite(b.ev, fav) ? 1 : 0;
+          if (aFav !== bFav) return bFav - aFav; // favorite first
+          return a.idx - b.idx; // original order
+        });
+        return tagged.map(t => t.ev);
+      },
+      topIsFavorite() {
+        const first = (this.sortedEvents && this.sortedEvents.length) ? this.sortedEvents[0] : null;
+        if (!first) return false;
+        const fav = (this.favoriteAbbr || '').toUpperCase();
+        return this.eventHasFavorite(first, fav);
+      }
+    },
     methods: {
+      eventHasFavorite(event, favOverride) {
+        try {
+          const fav = (favOverride || this.favoriteAbbr || '').toUpperCase();
+          if (!fav) return false;
+          const competitions = event?.competitions || [];
+          for (const comp of competitions) {
+            const competitors = comp?.competitors || [];
+            for (const c of competitors) {
+              const abbr = (c?.team?.abbreviation || c?.team?.shortDisplayName || '').toString().toUpperCase();
+              if (abbr && abbr === fav) return true;
+            }
+          }
+          return false;
+        } catch {
+          return false;
+        }
+      },
       formatLocalTime(dateString) {
         const date = new Date(dateString);
         return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
@@ -239,6 +300,11 @@
   justify-content: center;
 }
 
+.game-item.favorite-highlight .competition {
+  border-color: #ffd54f;
+  box-shadow: 0 0 0 2px rgba(255, 213, 79, 0.15);
+}
+
 .competition {
   display: flex;
   align-items: center;
@@ -248,6 +314,21 @@
   margin-bottom: 10px;
   width: 100%;
   justify-content: space-between;
+  position: relative;
+}
+
+.favorite-pill {
+  position: absolute;
+  top: -10px;
+  left: 10px;
+  background: #2a2200;
+  color: #ffd54f;
+  border: 1px solid #5a4a00;
+  border-radius: 999px;
+  padding: 3px 8px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.3px;
 }
 
 .team-info {
