@@ -312,7 +312,6 @@
   padding: 10px;
   border-radius: 5px;
   margin-bottom: 10px;
-  width: 100%;
   justify-content: space-between;
   position: relative;
 }
@@ -395,7 +394,6 @@ h1 {
   border: 1px solid #2a2a2a;
   border-radius: 6px;
   padding: 8px 10px 10px;
-  width: 100%;
   font-family: system-ui, Arial, sans-serif;
 }
 .odds-header {
