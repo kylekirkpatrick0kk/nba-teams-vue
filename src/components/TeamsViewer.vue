@@ -1,6 +1,7 @@
 <template>
   <div>
-    <h2>NBA Teams</h2>
+    <h1>NBA Teams</h1>
+    <p>Select a team to view details or mark it as your favorite. Your favorite team will be highlighted on gameday.</p>
     <div v-if="teamsData" class="teams-container">
       <div v-for="league in teamsData.sports[0].leagues" :key="league.id" class="league">
         <div class="teams">

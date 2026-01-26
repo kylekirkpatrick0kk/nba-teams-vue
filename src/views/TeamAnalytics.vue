@@ -1,6 +1,5 @@
 <template>
   <div>
-    <h1>Team Analytics</h1>
     <TeamsViewer />
   </div>
 </template>

@@ -2,7 +2,7 @@
   <div id="app">
     <nav class="navigation">
       <router-link to="/" class="nav-link">Home</router-link>
-      <router-link to="/team-analytics" class="nav-link">Team Analytics</router-link>
+      <router-link to="/team-analytics" class="nav-link">Teams Viewer</router-link>
     </nav>
     <router-view />
   </div>
