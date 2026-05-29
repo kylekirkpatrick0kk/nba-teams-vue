@@ -5,6 +5,11 @@
         <p class="date">{{ new Date().toDateString() }}</p>
         <!-- number of nba games (len of data.events) in top right -->
         <p v-if="data && data.events" class="game-count">Number of NBA games today: {{ data.events.length }}</p>
+        <div class="meta-right">
+          <button class="refresh-btn" :class="{ spinning: loading }" @click="refreshData" :disabled="loading" title="Refresh scores">
+            ↻
+          </button>
+        </div>
       </div>
       <ul v-if="data && data.events" class="game-list">
         <li
@@ -142,6 +147,7 @@
     data() {
       return {
         data: null,
+        loading: false,
         favoriteAbbr: getFavoriteTeam(),
       };
     },
@@ -263,6 +269,16 @@
         const eventId = this.extractEventIdFromOdds(competition);
         if (!eventId) return null;
         return `https://espnbet.com/sport/basketball/organization/united-states/competition/nba/event/${eventId}`;
+      },
+      async refreshData() {
+        this.loading = true;
+        try {
+          this.data = await fetchData();
+        } catch (error) {
+          console.error('Error refreshing data:', error);
+        } finally {
+          this.loading = false;
+        }
       }
     }
   };
@@ -280,6 +296,46 @@
 .date {
   font-size: 1.2em;
   font-weight: bold;
+  flex: 1;
+  text-align: left;
+}
+
+.meta-right {
+  flex: 1;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.refresh-btn {
+  padding: 0;
+  width: 2em;
+  height: 2em;
+  font-size: 1.2em;
+  line-height: 1;
+  cursor: pointer;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  background-color: #1a1a1a;
+  color: rgba(255, 255, 255, 0.87);
+  transition: border-color 0.25s, transform 0.3s;
+}
+
+.refresh-btn:hover:not(:disabled) {
+  border-color: #646cff;
+}
+
+.refresh-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.refresh-btn.spinning {
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }
 
 .game-count {
