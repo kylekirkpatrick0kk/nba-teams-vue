@@ -58,7 +58,7 @@
   <style scoped>
   .news-container {
     padding: 20px;
-    background-color: #2e2e2e;
+    background-color: #1a1a1a;
     color: #e0e0e0;
     border-radius: 8px;
   }

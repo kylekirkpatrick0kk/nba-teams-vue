@@ -39,12 +39,12 @@ export default defineComponent({
 h1 {
   font-size: 2.5rem;
   margin-bottom: 1rem;
-  color: #e0e0e0; /* Dark text for the heading */
+  color: #e0e0e0;
 }
 
 .toggle-news-button {
-  background-color: #007bff; /* Blue button */
-  color: #ffffff; /* White text */
+  background-color: #1e88e5;
+  color: #ffffff;
   border: none;
   padding: 10px 20px;
   font-size: 1rem;
@@ -55,21 +55,11 @@ h1 {
 }
 
 .toggle-news-button:hover {
-  background-color: #0056b3; /* Darker blue on hover */
+  background-color: #1565c0;
 }
 
 .toggle-news-button:focus {
   outline: none;
-  box-shadow: 0 0 5px #0056b3; /* Focus effect */
-}
-
-.NewsViewer,
-.DataViewer {
-  margin-top: 20px;
-  padding: 15px;
-  border: 1px solid #dee2e6; /* Light border for separation */
-  border-radius: 8px;
-  background-color: #ffffff; /* White background for content */
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+  box-shadow: 0 0 5px #1565c0;
 }
 </style>

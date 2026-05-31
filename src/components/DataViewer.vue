@@ -289,7 +289,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 2px solid #ccc;
+  border-bottom: 2px solid #333;
   padding: 10px 0;
 }
 
@@ -350,7 +350,7 @@
 
 .game-item {
   margin-bottom: 1em;
-  border-bottom: 1px solid #ccc;
+  border-bottom: 1px solid #333;
   padding: 10px 0;
   display: flex;
   justify-content: center;
@@ -364,7 +364,7 @@
 .competition {
   display: flex;
   align-items: center;
-  border: 1px solid #ccc;
+  border: 1px solid #333;
   padding: 10px;
   border-radius: 5px;
   margin-bottom: 10px;
@@ -430,7 +430,7 @@
 }
 
 h1 {
-  border-bottom: 2px solid #ccc;
+  border-bottom: 2px solid #333;
   padding-bottom: 10px;
   margin-bottom: 20px;
   text-align: center;

@@ -149,13 +149,20 @@ export default defineComponent({
 }
 
 .team-card {
-  border: 1px solid #ddd;
+  border: 1px solid #2a2a2a;
   padding: 10px;
   border-radius: 5px;
   text-align: center;
   width: 150px;
   cursor: pointer;
   position: relative;
+  background-color: #1a1a1a;
+  transition: border-color 0.25s, transform 0.2s;
+}
+
+.team-card:hover {
+  border-color: #444;
+  transform: translateY(-2px);
 }
 
 .team-logo {

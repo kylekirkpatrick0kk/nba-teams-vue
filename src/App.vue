@@ -22,8 +22,6 @@ export default defineComponent({
   margin: 0 auto;
   padding: 2rem;
   text-align: center;
-  background-color: #2e2e2e;
-  color: #e0e0e0;
 }
 
 .navigation {
@@ -35,11 +33,11 @@ export default defineComponent({
 
 .nav-link {
   text-decoration: none;
-  color: #007bff;
+  color: #64b5f6;
   font-weight: bold;
 }
 
 .nav-link:hover {
-  color: #0056b3;
+  color: #90caf9;
 }
 </style>
