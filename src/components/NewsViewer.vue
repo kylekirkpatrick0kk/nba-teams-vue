@@ -57,6 +57,7 @@
   
   <style scoped>
   .news-container {
+    margin-top: 12px;
     padding: 20px;
     background-color: #1a1a1a;
     color: #e0e0e0;
